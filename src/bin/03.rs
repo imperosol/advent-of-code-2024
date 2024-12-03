@@ -1,4 +1,4 @@
-use regex::Regex;
+use regex::{Regex, RegexBuilder};
 use std::str::FromStr;
 
 advent_of_code::solution!(3);
@@ -28,30 +28,13 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    let re = Regex::new(r"(mul\(\d{1,3},\d{1,3}\))|(do\(\))|(don't\(\))").unwrap();
-    let mut dont = false;
-    let res = re
-        .find_iter(input)
-        .map(|m| m.as_str())
-        .filter_map(|s| match s {
-            "do()" => {
-                dont = false;
-                None
-            }
-            "don't()" => {
-                dont = true;
-                None
-            }
-            s => {
-                if dont {
-                    None
-                } else {
-                    s.parse::<MulStmt>().map(|i| i.0).ok()
-                }
-            }
-        })
-        .sum();
-    Some(res)
+    // just remove everything after a "don't()" that isn't closed by a "do()"
+    // then do part 1 with the cleaned string
+    let re = RegexBuilder::new(r"don't\(\)(.*?)(do\(\)|$)")
+        .dot_matches_new_line(true)
+        .build()
+        .unwrap();
+    part_one(&re.replace_all(input, ""))
 }
 
 #[cfg(test)]
