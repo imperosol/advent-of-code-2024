@@ -1,5 +1,5 @@
 use itertools::Itertools;
-use rayon::prelude::{ParallelSliceMut};
+use rayon::prelude::ParallelSliceMut;
 use std::cmp::{max, min};
 
 advent_of_code::solution!(1);
